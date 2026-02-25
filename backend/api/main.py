@@ -1,22 +1,46 @@
-import os
-from contextlib import asynccontextmanager
-from fastapi import FastAPI
 import socketio
-import redis.asyncio as aioredis
+import asyncio
 from typing import AsyncGenerator
-from .core.config import settings
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
+import redis.asyncio as aioredis
+from api.core.config import settings
+from api.services.redis_bridge import redis_to_socket_bridge
+from api.routes import aqi
 
 sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Startup: connect to Redis and start bridge
-    app.state.redis = await aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+    try:
+        app.state.redis = await aioredis.from_url(settings.REDIS_URL, decode_responses=True)
+        # Start the Redis-Socket.IO bridge as a background task
+        app.state.bridge_task = asyncio.create_task(redis_to_socket_bridge(sio))
+    except Exception as e:
+        print(f"Startup error: {e}")
+    
     yield
     # Shutdown
-    await app.state.redis.close()
+    if hasattr(app.state, 'bridge_task'):
+        app.state.bridge_task.cancel()
+    if hasattr(app.state, 'redis'):
+        await app.state.redis.close()
 
 app = FastAPI(title="AQI Monitoring API", lifespan=lifespan)
+
+# CORS Configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include Routers
+app.include_router(aqi.router, prefix="/api/aqi", tags=["AQI"])
 sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 @app.get("/health")
