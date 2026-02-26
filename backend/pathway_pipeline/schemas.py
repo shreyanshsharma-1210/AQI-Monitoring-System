@@ -4,7 +4,7 @@ class StationAQISchema(pw.Schema):
     city_id: int
     station_id: int
     city: str
-    aqi: int
+    aqi: float
     pm25: float
     pm10: float
     no2: float

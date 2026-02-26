@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, BigInteger
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, BigInteger, Text
 from sqlalchemy.orm import relationship
 from api.core.db import Base
 from datetime import datetime
@@ -27,10 +27,23 @@ class StationAQIHistory(Base):
     id = Column(Integer, primary_key=True, index=True)
     city_id = Column(Integer, ForeignKey("city_registry.id"))
     station_id = Column(Integer, ForeignKey("city_stations.id"))
-    aqi = Column(Integer)
+    aqi = Column(Float)
     pm25 = Column(Float)
     pm10 = Column(Float)
-    recorded_at = Column(String) # Stored as string ISO in DB or Datetime
+    no2 = Column(Float, default=0)
+    o3 = Column(Float, default=0)
+    co = Column(Float, default=0)
+    so2 = Column(Float, default=0)
+    lat = Column(Float, default=0)
+    lon = Column(Float, default=0)
+    health_category = Column(Text, default="")
+    temp = Column(Float, default=0)
+    humidity = Column(Integer, default=0)
+    wind_speed = Column(Float, default=0)
+    uv_index = Column(Float, default=0)
+    precip_prob = Column(Integer, default=0)
+    forecast_aqi_24h = Column(Text, default="[]")
+    recorded_at = Column(String)
     time = Column(BigInteger)
     diff = Column(Integer)
     station = relationship("Station", back_populates="aqi_history")

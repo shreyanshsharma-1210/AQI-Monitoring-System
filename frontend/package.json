@@ -9,19 +9,25 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.24",
-    "postcss": "^8.5.6",
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.0",
     "tailwindcss": "^4.2.1",
     "typescript": "~5.9.3",
     "vite": "^7.3.1"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
+    "@react-leaflet/core": "^2.1.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.575.0",
-    "react-leaflet": "^5.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-is": "^19.2.4",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^7.13.1",
     "recharts": "^3.7.0",
     "socket.io-client": "^4.8.3",

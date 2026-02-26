@@ -3,7 +3,12 @@ import os
 from contextlib import closing
 
 def get_db_url():
-    return os.environ.get("DATABASE_URL", "postgresql://aqi_user:secret@localhost:5432/aqi_db")
+    url = os.environ.get("DATABASE_URL", "postgresql://aqi_user:secret@localhost:5432/aqi_db")
+    # psycopg2 uses postgresql://, not postgresql+asyncpg:// or postgres://
+    url = url.replace("postgresql+asyncpg://", "postgresql://")
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    return url
 
 def load_cities():
     """Reads all active cities from city_registry."""

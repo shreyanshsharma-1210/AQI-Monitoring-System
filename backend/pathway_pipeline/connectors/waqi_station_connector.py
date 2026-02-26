@@ -27,7 +27,7 @@ class WAQIStationConnectorSubject(pw.io.python.ConnectorSubject):
                             "city_id": station["city_id"],
                             "station_id": station["id"],
                             "city": station["station_name"],
-                            "aqi": int(d.get("aqi", 0) if str(d.get("aqi", 0)).isdigit() else 0),
+                            "aqi": float(d.get("aqi", 0) if str(d.get("aqi", 0)).isdigit() else 0),
                             "pm25": float(iaqi.get("pm25", {}).get("v", 0.0)),
                             "pm10": float(iaqi.get("pm10", {}).get("v", 0.0)),
                             "no2": float(iaqi.get("no2", {}).get("v", 0.0)),
