@@ -6,6 +6,7 @@ import json
 import httpx
 from api.core.db import get_db
 from api.models.aqi import City, Station, StationAQIHistory
+from api.services.aqi_service import get_yoy_insight
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -316,6 +317,16 @@ async def get_pollutant_history(
     )
     rows = result.all()
     return [{"time": r[0], "recorded_at": r[1], "value": r[2]} for r in reversed(rows)]
+
+# ── Year-over-Year Insight ────────────────────────────────────────────────────
+
+@router.get("/cities/{city_id}/yoy-insight")
+async def yoy_insight(city_id: int, db: AsyncSession = Depends(get_db)):
+    """
+    Compares today's AQI against the same calendar day across all available
+    years in station_aqi_history. Powers the YoYInsightCard on the Dashboard.
+    """
+    return await get_yoy_insight(city_id, db)
 
 # ── Health recommendation ─────────────────────────────────────────────────────
 

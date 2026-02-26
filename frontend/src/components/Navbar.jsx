@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Wind, Map, BarChart2, User } from 'lucide-react';
+import { Wind, Map, BarChart2, User, CalendarDays, Trophy } from 'lucide-react';
 
 const links = [
-  { to: '/', label: 'Dashboard', icon: Wind },
-  { to: '/heatmap', label: 'Heatmap', icon: Map },
+  { to: '/',          label: 'Dashboard',  icon: Wind },
+  { to: '/heatmap',   label: 'Heatmap',    icon: Map },
   { to: '/pollutant/pm25', label: 'Pollutants', icon: BarChart2 },
-  { to: '/profile', label: 'Profile', icon: User },
+  { to: '/history',   label: 'History',    icon: CalendarDays },
+  { to: '/rankings',  label: 'Rankings',   icon: Trophy },
+  { to: '/profile',   label: 'Profile',    icon: User },
 ];
 
 export default function Navbar() {

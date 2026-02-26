@@ -45,6 +45,9 @@ CREATE TABLE IF NOT EXISTS station_aqi_history (
 );
 CREATE INDEX IF NOT EXISTS idx_sah_station_time ON station_aqi_history(station_id, time DESC);
 CREATE INDEX IF NOT EXISTS idx_sah_city_time ON station_aqi_history(city_id, time DESC);
+-- Phase 4: historical analysis indexes
+CREATE INDEX IF NOT EXISTS idx_sah_city_recorded ON station_aqi_history(city_id, recorded_at);
+CREATE INDEX IF NOT EXISTS idx_sah_city_diff_recorded ON station_aqi_history(city_id, diff, recorded_at);
 
 -- Users (references city_registry, so must come after it)
 CREATE TABLE IF NOT EXISTS users (

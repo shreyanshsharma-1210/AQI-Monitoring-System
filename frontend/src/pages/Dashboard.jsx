@@ -8,6 +8,7 @@ import WeatherCard from '../components/WeatherCard';
 import ForecastChart from '../components/ForecastChart';
 import PollutantTabBar from '../components/PollutantTabBar';
 import CitySelector from '../components/CitySelector';
+import YoYInsightCard from '../components/YoYInsightCard';
 
 const POLLUTANT_META = {
   pm25: { label: 'PM2.5', unit: 'μg/m³', safe: 12, warn: 35 },
@@ -169,6 +170,9 @@ export default function Dashboard() {
           <WeatherCard weather={weather} />
           <ForecastChart forecastJson={weather?.forecast_aqi_24h} />
         </div>
+
+        {/* Year-over-Year Insight */}
+        {selectedCityId && <YoYInsightCard cityId={selectedCityId} />}
 
         {/* Pollutant bars */}
         <div className="bg-gray-900 rounded-xl border border-gray-700 p-4">
