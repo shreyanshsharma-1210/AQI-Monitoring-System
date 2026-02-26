@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "heatmap": "Heatmap",
+    "pollutants": "Pollutants",
+    "history": "History",
+    "rankings": "Rankings",
+    "leaderboard": "Leaderboard",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "title": "Air Quality Dashboard",
+    "live": "Live",
+    "refresh": "Refresh",
+    "lastUpdated": "Updated",
+    "selectCity": "Select a city",
+    "detectLocation": "Detect my location",
+    "detecting": "Detecting...",
+    "noData": "No data available",
+    "loading": "Loading...",
+    "stations": "Monitoring Stations",
+    "forecast": "48-Hour Forecast",
+    "pollutants": "Pollutant Levels"
+  },
+  "aqi": {
+    "Good": "Good",
+    "Moderate": "Moderate",
+    "Unhealthy for Sensitive Groups": "Unhealthy for Sensitive Groups",
+    "Unhealthy": "Unhealthy",
+    "Very Unhealthy": "Very Unhealthy",
+    "Hazardous": "Hazardous",
+    "Unknown": "Unknown"
+  },
+  "profile": {
+    "title": "My Profile",
+    "points": "Points",
+    "level": "Level",
+    "streak": "Streak",
+    "days": "days",
+    "totalCheckins": "Total Check-ins",
+    "checkIn": "Check In Today",
+    "checkedIn": "Checked In ✓",
+    "badges": "My Badges",
+    "allBadges": "All Badges",
+    "earned": "Earned",
+    "locked": "Locked",
+    "preferredCity": "Preferred City",
+    "language": "Language",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Saved!"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "global": "Global",
+    "city": "My City",
+    "rank": "Rank",
+    "player": "Player",
+    "points": "Points",
+    "level": "Level",
+    "streak": "Streak",
+    "noUsers": "No users yet — be the first to check in!",
+    "loading": "Loading leaderboard..."
+  },
+  "challenges": {
+    "title": "Daily Challenges",
+    "subtitle": "Complete challenges to earn bonus points",
+    "complete": "Complete",
+    "completed": "Completed ✓",
+    "pts": "pts",
+    "loading": "Loading challenges..."
+  },
+  "rankings": {
+    "title": "City Rankings",
+    "hottest": "🌡️ Hottest",
+    "coldest": "🥶 Coldest",
+    "polluted": "💨 Most Polluted",
+    "cleanest": "✅ Cleanest"
+  },
+  "weather": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "wind": "Wind",
+    "uvIndex": "UV Index",
+    "precipitation": "Precip. Chance"
+  },
+  "history": {
+    "title": "Historical Analysis"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "common": {
+    "cities": "cities",
+    "highestFirst": "Highest first",
+    "lowestFirst": "Lowest first"
+  }
+}

@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 import redis.asyncio as aioredis
 from api.core.config import settings
 from api.services.redis_bridge import redis_to_socket_bridge
-from api.routes import aqi, users, history, rankings
+from api.routes import aqi, users, history, rankings, gamification
 
 sio = socketio.AsyncServer(async_mode="asgi", cors_allowed_origins="*")
 
@@ -44,6 +44,7 @@ app.include_router(aqi.router, prefix="/api/aqi", tags=["AQI"])
 app.include_router(users.router, prefix="/api", tags=["Users"])
 app.include_router(history.router, prefix="/api", tags=["History"])
 app.include_router(rankings.router, prefix="/api", tags=["Rankings"])
+app.include_router(gamification.router, prefix="/api", tags=["Gamification"])
 sio_app = socketio.ASGIApp(sio, other_asgi_app=app)
 
 @app.get("/health")
