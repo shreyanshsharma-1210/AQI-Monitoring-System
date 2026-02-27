@@ -53,12 +53,7 @@ export default function DailyChallengeCard({ userId, onComplete }) {
   };
 
   return (
-    <div className="
-      rounded-xl border p-4
-      bg-gray-800 border-gray-700 text-white
-      dark:bg-gray-800 dark:border-gray-700 dark:text-white
-      light:bg-white light:border-gray-200 light:text-gray-900
-    ">
+    <div className="rounded-xl border p-4 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
       {/* Header */}
       <div className="flex items-center gap-2 mb-1">
         <Star size={15} className="text-yellow-400" />
@@ -77,9 +72,7 @@ export default function DailyChallengeCard({ userId, onComplete }) {
                 flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors
                 ${c.completed
                   ? 'bg-green-600/15 border border-green-600/30'
-                  : 'bg-gray-700/60 border border-gray-600/40 hover:border-gray-500/60'}
-                dark:bg-gray-700/60 dark:border-gray-600/40
-                light:bg-gray-50 light:border-gray-200
+                  : 'bg-gray-50 dark:bg-gray-700/60 border border-gray-200 dark:border-gray-600/40 hover:border-gray-300 dark:hover:border-gray-500/60'}
               `}
             >
               {/* Icon */}
@@ -89,7 +82,7 @@ export default function DailyChallengeCard({ userId, onComplete }) {
 
               {/* Text */}
               <div className="flex-1 min-w-0">
-                <p className={`text-xs font-medium ${c.completed ? 'text-green-300' : 'text-gray-200 dark:text-gray-200 light:text-gray-700'}`}>
+                <p className={`text-xs font-medium ${c.completed ? 'text-green-400 dark:text-green-300' : 'text-gray-700 dark:text-gray-200'}`}>
                   {c.title}
                 </p>
                 <p className="text-xs text-gray-400 truncate">{c.description}</p>

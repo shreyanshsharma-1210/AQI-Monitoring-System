@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -7,11 +8,6 @@ import {
 import { CalendarDays, TrendingUp, Moon, Sun, ArrowLeft } from 'lucide-react';
 import useStore from '../store/useStore';
 import CitySelector from '../components/CitySelector';
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
 
 // One distinct colour per year
 const YEAR_COLOURS = ['#60a5fa', '#34d399', '#f59e0b', '#f87171', '#a78bfa', '#fb923c'];
@@ -30,10 +26,10 @@ const aqiColour = (aqi) => {
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 function StatCard({ label, value, sub, colour }) {
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 p-4 flex flex-col gap-1">
-      <p className="text-xs text-gray-400">{label}</p>
-      <p className="text-2xl font-bold" style={{ color: colour || '#fff' }}>{value ?? '—'}</p>
-      {sub && <p className="text-xs text-gray-500">{sub}</p>}
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 flex flex-col gap-1">
+      <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+      <p className="text-2xl font-bold" style={{ color: colour || '#1e293b' }}>{value ?? '—'}</p>
+      {sub && <p className="text-xs text-gray-400">{sub}</p>}
     </div>
   );
 }
@@ -41,10 +37,10 @@ function StatCard({ label, value, sub, colour }) {
 // ─── Section Header ───────────────────────────────────────────────────────────
 function Section({ title, icon: Icon, children }) {
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 space-y-4">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 space-y-4">
       <div className="flex items-center gap-2">
-        <Icon size={16} className="text-blue-400" />
-        <h2 className="text-sm font-semibold text-white">{title}</h2>
+        <Icon size={16} className="text-blue-500 dark:text-blue-400" />
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
       </div>
       {children}
     </div>
@@ -55,8 +51,8 @@ function Section({ title, icon: Icon, children }) {
 function AQITooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-gray-800 border border-gray-600 rounded-lg p-3 text-xs space-y-1 shadow-xl">
-      <p className="text-gray-300 font-medium">Day {label}</p>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 text-xs space-y-1 shadow-xl">
+      <p className="text-gray-700 dark:text-gray-300 font-medium">Day {label}</p>
       {payload.map((p) => (
         <p key={p.name} style={{ color: p.color }}>
           {p.name}: <span className="font-bold">{p.value}</span>
@@ -68,6 +64,7 @@ function AQITooltip({ active, payload, label }) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function HistoricalAnalysis() {
+  const { t, i18n } = useTranslation();
   const navigate  = useNavigate();
   const { cities, setCities, selectedCityId, setSelectedCityId } = useStore();
 
@@ -166,21 +163,21 @@ export default function HistoricalAnalysis() {
   const cityName = cities.find((c) => c.id === selectedCityId)?.display_name || '—';
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-gray-900 dark:text-white">
       {/* Header */}
-      <div className="px-4 py-5 border-b border-gray-800 bg-gray-900">
+      <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
         <div className="max-w-5xl mx-auto flex flex-wrap gap-3 items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/')}
-              className="p-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+              className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <ArrowLeft size={16} />
             </button>
             <div>
               <h1 className="text-lg font-bold flex items-center gap-2">
                 <CalendarDays size={18} className="text-blue-400" />
-                Historical AQI Analysis
+                {t('history.title')}
               </h1>
               <p className="text-xs text-gray-400">{cityName}</p>
             </div>
@@ -192,11 +189,12 @@ export default function HistoricalAnalysis() {
       <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
 
         {/* ── Section 1: Year-over-Year Monthly Chart ── */}
-        <Section title="Year-over-Year Monthly Comparison" icon={TrendingUp}>
+        <Section title={t('history.yoyComparison')} icon={TrendingUp}>
           {/* Month selector */}
           <div className="flex flex-wrap gap-1.5">
-            {MONTHS.map((m, i) => {
+            {Array.from({ length: 12 }, (_, i) => {
               const mn = i + 1;
+              const monthLabel = new Intl.DateTimeFormat(i18n.language === 'hi' ? 'hi-IN' : 'en-IN', { month: 'short' }).format(new Date(2024, i, 1));
               return (
                 <button
                   key={mn}
@@ -204,9 +202,9 @@ export default function HistoricalAnalysis() {
                   className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
                     ${selectedMonth === mn
                       ? 'bg-blue-600 text-white'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'}`}
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                 >
-                  {m.slice(0, 3)}
+                  {monthLabel}
                 </button>
               );
             })}
@@ -240,17 +238,15 @@ export default function HistoricalAnalysis() {
 
           {/* Chart */}
           {loadingMonthly ? (
-            <div className="h-48 flex items-center justify-center text-gray-500 text-sm">Loading…</div>
+            <div className="h-48 flex items-center justify-center text-gray-500 text-sm">{t('history.loading')}</div>
           ) : chartMonthly.length === 0 ? (
             <div className="h-48 flex items-center justify-center text-gray-500 text-sm">
-              No data for {MONTHS[selectedMonth - 1]}. Seed historical data first.
+              {t('history.noMonthData', { month: new Intl.DateTimeFormat(i18n.language === 'hi' ? 'hi-IN' : 'en-IN', { month: 'long' }).format(new Date(2024, selectedMonth - 1, 1)) })}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={chartMonthly} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="day" tick={{ fill: '#9ca3af', fontSize: 11 }} label={{ value: 'Day', position: 'insideBottom', fill: '#6b7280', fontSize: 11, offset: -2 }} />
-                <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} label={{ value: 'AQI', angle: -90, position: 'insideLeft', fill: '#6b7280', fontSize: 11 }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <Tooltip content={<AQITooltip />} />
                 <Legend wrapperStyle={{ fontSize: 12, color: '#9ca3af' }} />
                 {visibleYears.map((y, i) => (
@@ -271,23 +267,23 @@ export default function HistoricalAnalysis() {
         </Section>
 
         {/* ── Section 2: Day / Night Trend ── */}
-        <Section title="24-Hour AQI Pattern (last 30 days)" icon={Sun}>
+        <Section title={t('history.dayNightTitle')} icon={Sun}>
           {/* Best / worst hour stat cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <StatCard
-              label="Best Hour (avg)"
+              label={t('history.bestHour')}
               value={bestHour ? `${bestHour.hour}:00` : '—'}
               sub={bestHour ? `AQI ${bestHour.avg_aqi}` : ''}
               colour="#22c55e"
             />
             <StatCard
-              label="Worst Hour (avg)"
+              label={t('history.worstHour')}
               value={worstHour ? `${worstHour.hour}:00` : '—'}
               sub={worstHour ? `AQI ${worstHour.avg_aqi}` : ''}
               colour="#ef4444"
             />
             <StatCard
-              label="Day Avg (6 AM–6 PM)"
+              label={t('history.dayAvg')}
               value={
                 (() => {
                   const d = dayNightData.filter((r) => r.period === 'day');
@@ -298,7 +294,7 @@ export default function HistoricalAnalysis() {
               colour="#facc15"
             />
             <StatCard
-              label="Night Avg (6 PM–6 AM)"
+              label={t('history.nightAvg')}
               value={
                 (() => {
                   const n = dayNightData.filter((r) => r.period === 'night');
@@ -311,25 +307,19 @@ export default function HistoricalAnalysis() {
           </div>
 
           {loadingDN ? (
-            <div className="h-40 flex items-center justify-center text-gray-500 text-sm">Loading…</div>
+            <div className="h-40 flex items-center justify-center text-gray-500 text-sm">{t('history.loading')}</div>
           ) : dayNightData.length === 0 ? (
             <div className="h-40 flex items-center justify-center text-gray-500 text-sm">
-              No hourly data yet. Data accumulates as the pipeline runs.
+              {t('history.noHourlyData')}
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={dayNightData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis
-                  dataKey="hour"
-                  tick={{ fill: '#9ca3af', fontSize: 11 }}
-                  tickFormatter={(h) => `${h}:00`}
-                />
-                <YAxis tick={{ fill: '#9ca3af', fontSize: 11 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <Tooltip
                   formatter={(v, n, p) => [v, 'Avg AQI']}
                   labelFormatter={(h) => `${h}:00 — ${h >= 6 && h <= 17 ? 'Day' : 'Night'}`}
-                  contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8, fontSize: 12 }}
+                  contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, fontSize: 12 }}
                 />
                 <Bar dataKey="avg_aqi" radius={[3, 3, 0, 0]}>
                   {dayNightData.map((entry, i) => (
@@ -348,34 +338,34 @@ export default function HistoricalAnalysis() {
           <div className="flex gap-4 text-xs text-gray-400">
             <span className="flex items-center gap-1.5">
               <span className="w-3 h-3 rounded-sm bg-yellow-400 inline-block" />
-              Day (6 AM – 6 PM)
+              {t('history.dayLegend')}
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-3 h-3 rounded-sm bg-indigo-400 inline-block" />
-              Night (6 PM – 6 AM)
+              {t('history.nightLegend')}
             </span>
           </div>
         </Section>
 
         {/* ── Section 3: Custom Date Range ── */}
-        <Section title="Custom Date Range Stats" icon={CalendarDays}>
+        <Section title={t('history.rangeTitle')} icon={CalendarDays}>
           <div className="flex flex-wrap gap-3 items-end">
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-gray-400">Start date</label>
+              <label className="text-xs text-gray-400">{t('history.startDate')}</label>
               <input
                 type="date"
                 value={rangeStart}
                 onChange={(e) => setRangeStart(e.target.value)}
-                className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-blue-500"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-gray-400">End date</label>
+              <label className="text-xs text-gray-400">{t('history.endDate')}</label>
               <input
                 type="date"
                 value={rangeEnd}
                 onChange={(e) => setRangeEnd(e.target.value)}
-                className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500"
+                className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-blue-500"
               />
             </div>
             <button
@@ -383,29 +373,29 @@ export default function HistoricalAnalysis() {
               disabled={!rangeStart || !rangeEnd || loadingRange}
               className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-sm font-medium transition-colors"
             >
-              {loadingRange ? 'Loading…' : 'Analyse'}
+            {loadingRange ? t('history.loading') : t('history.analyse')}
             </button>
           </div>
 
           {rangeStats && (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
-              <StatCard label="Min AQI" value={rangeStats.min_aqi} colour={aqiColour(rangeStats.min_aqi)} />
-              <StatCard label="Avg AQI" value={rangeStats.avg_aqi} colour={aqiColour(rangeStats.avg_aqi)} />
-              <StatCard label="Max AQI" value={rangeStats.max_aqi} colour={aqiColour(rangeStats.max_aqi)} />
+              <StatCard label={t('history.minAQI')} value={rangeStats.min_aqi} colour={aqiColour(rangeStats.min_aqi)} />
+              <StatCard label={t('history.avgAQI')} value={rangeStats.avg_aqi} colour={aqiColour(rangeStats.avg_aqi)} />
+              <StatCard label={t('history.maxAQI')} value={rangeStats.max_aqi} colour={aqiColour(rangeStats.max_aqi)} />
               <StatCard
-                label="From"
+                label={t('history.from')}
                 value={rangeStats.recorded_min_at ? new Date(rangeStats.recorded_min_at).toLocaleDateString() : '—'}
-                sub="earliest reading"
+                sub={t('history.earliest')}
               />
               <StatCard
-                label="To"
+                label={t('history.to')}
                 value={rangeStats.recorded_max_at ? new Date(rangeStats.recorded_max_at).toLocaleDateString() : '—'}
-                sub="latest reading"
+                sub={t('history.latest')}
               />
               <StatCard
-                label="Data Points"
+                label={t('history.dataPoints')}
                 value={rangeStats.data_points?.toLocaleString()}
-                sub="total records"
+                sub={t('history.totalRecords')}
               />
             </div>
           )}

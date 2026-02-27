@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Trophy, Thermometer, Wind, Droplets, ArrowUp, ArrowDown, RefreshCw } from 'lucide-react';
 import useStore from '../store/useStore';
 
@@ -12,14 +13,6 @@ const aqiMeta = (aqi) => {
   if (aqi <= 300) return { colour: '#ef4444', label: 'Very Unhealthy' };
   return { colour: '#7c3aed', label: 'Hazardous' };
 };
-
-// ── Tab config ────────────────────────────────────────────────────────────────
-const TABS = [
-  { key: 'hottest',   label: '🌡️ Hottest',       field: 'temp', sort: 'desc' },
-  { key: 'coldest',   label: '🥶 Coldest',        field: 'temp', sort: 'asc'  },
-  { key: 'polluted',  label: '💨 Most Polluted',  field: 'aqi',  sort: 'desc' },
-  { key: 'cleanest',  label: '✅ Cleanest',       field: 'aqi',  sort: 'asc'  },
-];
 
 // ── Single row card ───────────────────────────────────────────────────────────
 function RankRow({ rank, row, tab }) {
@@ -36,13 +29,13 @@ function RankRow({ rank, row, tab }) {
   const rankStyle = rank === 1 ? 'text-yellow-400' : rank === 2 ? 'text-gray-300' : rank === 3 ? 'text-amber-600' : 'text-gray-500';
 
   return (
-    <div className="flex items-center gap-3 bg-gray-800 hover:bg-gray-750 rounded-xl px-4 py-3 transition-colors">
+    <div className="flex items-center gap-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 border border-gray-100 dark:border-transparent rounded-xl px-4 py-3 transition-colors shadow-sm">
       {/* Rank */}
       <span className={`text-sm font-bold w-6 text-center shrink-0 ${rankStyle}`}>{rank}</span>
 
       {/* City */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white truncate">{row.city}</p>
+        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{row.city}</p>
         <p className="text-xs text-gray-400">{row.country_code}</p>
       </div>
 
@@ -86,7 +79,15 @@ function RankRow({ rank, row, tab }) {
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function Rankings() {
+  const { t } = useTranslation();
   const { liveUpdates } = useStore();
+
+  const TABS = [
+    { key: 'hottest',  label: t('rankings.hottest'),  field: 'temp', sort: 'desc' },
+    { key: 'coldest',  label: t('rankings.coldest'),  field: 'temp', sort: 'asc'  },
+    { key: 'polluted', label: t('rankings.polluted'), field: 'aqi',  sort: 'desc' },
+    { key: 'cleanest', label: t('rankings.cleanest'), field: 'aqi',  sort: 'asc'  },
+  ];
 
   const [weatherRows, setWeatherRows] = useState([]);
   const [aqiRows,     setAqiRows]     = useState([]);
@@ -134,7 +135,7 @@ export default function Rankings() {
 
   // Active sorted list
   const displayRows = useMemo(() => {
-    const tabCfg = TABS.find((t) => t.key === activeTab);
+    const tabCfg = TABS.find((tab) => tab.key === activeTab);
     if (!tabCfg) return [];
 
     const source = tabCfg.field === 'temp' ? mergedWeather : mergedAqi;
@@ -147,60 +148,60 @@ export default function Rankings() {
   }, [activeTab, mergedWeather, mergedAqi]);
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-gray-900 dark:text-white">
       {/* Header */}
-      <div className="px-4 py-5 border-b border-gray-800 bg-gray-900">
+      <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Trophy size={18} className="text-yellow-400" />
-            <h1 className="text-lg font-bold">City Rankings</h1>
+            <Trophy size={18} className="text-yellow-500" />
+            <h1 className="text-lg font-bold">{t('rankings.title')}</h1>
             {lastFetched && (
-              <span className="text-xs text-gray-500 ml-2">
-                · Updated {lastFetched.toLocaleTimeString()}
+              <span className="text-xs text-gray-400 ml-2">
+                · {t('rankings.updated')} {lastFetched.toLocaleTimeString()}
               </span>
             )}
           </div>
           <button
             onClick={fetchAll}
             disabled={loading}
-            className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:border-gray-500 text-gray-400 hover:text-white transition-colors"
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-400 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-5 space-y-4">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-5 space-y-4">
         {/* Tabs */}
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {TABS.map((t) => (
+          {TABS.map((tab) => (
             <button
-              key={t.key}
-              onClick={() => setActiveTab(t.key)}
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors
-                ${activeTab === t.key
+                ${activeTab === tab.key
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'}`}
+                  : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
             >
-              {t.label}
+              {tab.label}
             </button>
           ))}
         </div>
 
         {/* Sort direction hint */}
-        <div className="flex items-center gap-1.5 text-xs text-gray-500">
-          {TABS.find((t) => t.key === activeTab)?.sort === 'desc'
-            ? <><ArrowDown size={11} /> Highest first</>
-            : <><ArrowUp size={11} /> Lowest first</>}
-          <span>· {displayRows.length} cities</span>
+        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+          {TABS.find((tab) => tab.key === activeTab)?.sort === 'desc'
+            ? <><ArrowDown size={11} /> {t('common.highestFirst')}</>
+            : <><ArrowUp size={11} /> {t('common.lowestFirst')}</>}
+          <span>· {displayRows.length} {t('common.cities')}</span>
         </div>
 
         {/* Rows */}
         {loading && displayRows.length === 0 ? (
-          <div className="py-16 text-center text-gray-500">Loading rankings…</div>
+          <div className="py-16 text-center text-gray-400">{t('rankings.loading')}</div>
         ) : displayRows.length === 0 ? (
-          <div className="py-16 text-center text-gray-500">
-            No data yet. Data populates as the Pathway pipeline runs.
+          <div className="py-16 text-center text-gray-400">
+            {t('rankings.noData')}
           </div>
         ) : (
           <div className="space-y-2">

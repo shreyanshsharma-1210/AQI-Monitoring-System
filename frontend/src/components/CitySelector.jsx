@@ -7,7 +7,7 @@ export default function CitySelector({ cities, selected, onChange }) {
       <select
         value={selected || ''}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="appearance-none bg-gray-800 border border-gray-600 text-white text-sm pl-8 pr-8 py-1.5 rounded-lg cursor-pointer focus:outline-none focus:border-blue-500"
+        className="appearance-none bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white text-sm pl-8 pr-8 py-1.5 rounded-lg cursor-pointer focus:outline-none focus:border-blue-500"
       >
         <option value="" disabled>Select city…</option>
         {cities.map((c) => (

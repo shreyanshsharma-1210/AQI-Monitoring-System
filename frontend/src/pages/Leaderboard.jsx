@@ -23,10 +23,10 @@ function LeaderRow({ entry, currentUserId }) {
 
   return (
     <div className={`
-      flex items-center gap-3 rounded-xl px-4 py-3 transition-colors
+      flex items-center gap-3 rounded-xl px-4 py-3 transition-colors border
       ${isSelf
-        ? 'bg-blue-600/20 border border-blue-500/40'
-        : 'bg-gray-800 dark:bg-gray-800 light:bg-gray-50 border border-transparent hover:border-gray-700'}
+        ? 'bg-blue-50 dark:bg-blue-600/20 border-blue-200 dark:border-blue-500/40'
+        : 'bg-white dark:bg-gray-800 border-gray-100 dark:border-transparent hover:border-gray-200 dark:hover:border-gray-700 shadow-sm'}
     `}>
       {/* Rank */}
       <span className={`text-sm font-bold w-7 text-center shrink-0 ${rankStyle}`}>
@@ -37,9 +37,9 @@ function LeaderRow({ entry, currentUserId }) {
 
       {/* Username */}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white dark:text-white light:text-gray-900 truncate">
+        <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
           {entry.username}
-          {isSelf && <span className="ml-1 text-xs text-blue-400">(you)</span>}
+          {isSelf && <span className="ml-1 text-xs text-blue-500">(you)</span>}
         </p>
         <p className="text-xs text-gray-400">{entry.level_name}</p>
       </div>
@@ -100,15 +100,15 @@ export default function Leaderboard() {
   const preferredCity = cities.find((c) => c.id === preferredCityId);
 
   return (
-    <div className="min-h-screen bg-gray-950 dark:bg-gray-950 light:bg-gray-50 text-white dark:text-white light:text-gray-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-gray-900 dark:text-white">
       {/* Header */}
-      <div className="px-4 py-5 border-b border-gray-800 dark:border-gray-800 light:border-gray-200 bg-gray-900 dark:bg-gray-900 light:bg-white">
+      <div className="px-4 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm">
         <div className="max-w-2xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Trophy size={18} className="text-yellow-400" />
+            <Trophy size={18} className="text-yellow-500" />
             <h1 className="text-lg font-bold">{t('leaderboard.title')}</h1>
             {lastFetched && (
-              <span className="text-xs text-gray-500 ml-2">
+              <span className="text-xs text-gray-400 ml-2">
                 · {lastFetched.toLocaleTimeString()}
               </span>
             )}
@@ -116,24 +116,24 @@ export default function Leaderboard() {
           <button
             onClick={fetchLeaderboard}
             disabled={loading}
-            className="p-2 rounded-lg bg-gray-800 dark:bg-gray-800 light:bg-gray-100 border border-gray-700 dark:border-gray-700 light:border-gray-300 hover:border-gray-500 text-gray-400 hover:text-white transition-colors"
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-gray-400 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-5 space-y-4">
+      <div className="max-w-2xl mx-auto px-3 sm:px-4 py-4 sm:py-5 space-y-4">
         {/* My stats snippet */}
         {gamification && (
-          <div className="rounded-xl bg-blue-600/10 border border-blue-500/30 px-4 py-3 flex items-center gap-4">
-            <Medal size={18} className="text-yellow-400 shrink-0" />
+          <div className="rounded-xl bg-blue-50 dark:bg-blue-600/10 border border-blue-200 dark:border-blue-500/30 px-4 py-3 flex items-center gap-4">
+            <Medal size={18} className="text-yellow-500 shrink-0" />
             <div className="flex-1">
-              <p className="text-sm font-semibold">{gamification.level_name}</p>
-              <p className="text-xs text-gray-400">Level {gamification.level}</p>
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">{gamification.level_name}</p>
+              <p className="text-xs text-gray-500">Level {gamification.level}</p>
             </div>
             <div className="text-right">
-              <p className="text-lg font-bold text-yellow-400">{gamification.points}</p>
+              <p className="text-lg font-bold text-yellow-500 dark:text-yellow-400">{gamification.points}</p>
               <p className="text-xs text-gray-400">points</p>
             </div>
           </div>
@@ -144,7 +144,7 @@ export default function Leaderboard() {
           <button
             onClick={() => setActiveTab('global')}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-              ${activeTab === 'global' ? 'bg-blue-600 text-white' : 'bg-gray-800 dark:bg-gray-800 light:bg-gray-200 text-gray-300 dark:text-gray-300 light:text-gray-700 hover:bg-gray-700'}`}
+              ${activeTab === 'global' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50'}`}
           >
             🌍 {t('leaderboard.global')}
           </button>
@@ -152,7 +152,7 @@ export default function Leaderboard() {
             onClick={() => setActiveTab('city')}
             disabled={!preferredCityId}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors
-              ${activeTab === 'city' ? 'bg-blue-600 text-white' : 'bg-gray-800 dark:bg-gray-800 light:bg-gray-200 text-gray-300 dark:text-gray-300 light:text-gray-700 hover:bg-gray-700'}
+              ${activeTab === 'city' ? 'bg-blue-600 text-white' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50'}
               disabled:opacity-40 disabled:cursor-not-allowed`}
           >
             🏙️ {preferredCity ? preferredCity.display_name : t('leaderboard.city')}
@@ -163,7 +163,7 @@ export default function Leaderboard() {
         {loading ? (
           <SkeletonList count={10} />
         ) : rows.length === 0 ? (
-          <div className="py-16 text-center text-gray-500 text-sm">
+          <div className="py-16 text-center text-gray-400 text-sm">
             {t('leaderboard.noUsers')}
           </div>
         ) : (

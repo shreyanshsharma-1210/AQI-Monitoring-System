@@ -1,5 +1,5 @@
 /**
- * AQI Monitor — Service Worker for Web Push notifications (VAPID).
+ * AQIFY — Service Worker for Web Push notifications (VAPID).
  * Registered from AlertSettings.jsx via navigator.serviceWorker.register('/sw.js').
  *
  * Events handled:
@@ -17,7 +17,7 @@ self.addEventListener('push', (event) => {
     data = { title: 'AQI Alert', body: event.data ? event.data.text() : '' };
   }
 
-  const title = data.title || 'AQI Monitor';
+  const title = data.title || 'AQIFY';
   const options = {
     body:    data.body  || 'Air quality update',
     icon:    '/favicon.ico',

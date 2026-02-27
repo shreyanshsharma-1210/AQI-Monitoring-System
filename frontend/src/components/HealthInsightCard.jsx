@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ShieldAlert, Wind, Users } from 'lucide-react';
 import { getAQIColor } from '../store/useStore';
 
 const icons = [ShieldAlert, Wind, Users];
 
 export default function HealthInsightCard({ aqi, age = 25, condition = 'none' }) {
+  const { t } = useTranslation();
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -24,27 +26,27 @@ export default function HealthInsightCard({ aqi, age = 25, condition = 'none' })
 
   if (!data) {
     return (
-      <div className="bg-gray-800 rounded-xl p-4 animate-pulse h-32" />
+      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 animate-pulse h-32" />
     );
   }
 
   return (
-    <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
       <div className="flex items-center gap-2 mb-3">
         <ShieldAlert size={16} style={{ color: color.hex }} />
-        <h3 className="text-sm font-semibold text-white">Health Advisory</h3>
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t('health.advisory')}</h3>
         <span
           className="ml-auto text-xs font-bold px-2 py-0.5 rounded-full text-white"
           style={{ backgroundColor: color.hex }}
         >
-          {data.risk_level} Risk
+          {t(`health.${data.risk_level}`, t('health.risk', { level: data.risk_level }))}
         </span>
       </div>
       <ul className="space-y-1.5">
         {data.recommendations.map((rec, i) => {
           const Icon = icons[i % icons.length];
           return (
-            <li key={i} className="flex items-start gap-2 text-xs text-gray-300">
+            <li key={i} className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-300">
               <Icon size={13} className="mt-0.5 shrink-0 text-gray-400" />
               {rec}
             </li>

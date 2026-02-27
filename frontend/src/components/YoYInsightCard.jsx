@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TrendingUp, TrendingDown, Minus, BarChart2 } from 'lucide-react';
 
 /**
@@ -9,6 +10,7 @@ import { TrendingUp, TrendingDown, Minus, BarChart2 } from 'lucide-react';
  * Placed on the Dashboard between the AQI gauge row and the weather row.
  */
 export default function YoYInsightCard({ cityId }) {
+  const { t } = useTranslation();
   const [data,    setData]    = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +47,7 @@ export default function YoYInsightCard({ cityId }) {
     '#facc15';
 
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-700 p-4">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
       <div className="flex items-start gap-3">
         {/* Icon */}
         <div
@@ -60,10 +62,10 @@ export default function YoYInsightCard({ cityId }) {
           <div className="flex items-center gap-2 mb-1">
             <BarChart2 size={12} className="text-blue-400" />
             <span className="text-xs font-semibold text-blue-400 uppercase tracking-wide">
-              Year-over-Year Insight
+              {t('yoy.title')}
             </span>
           </div>
-          <p className="text-sm text-gray-200 leading-relaxed">{insight}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{insight}</p>
         </div>
       </div>
 
@@ -85,10 +87,10 @@ export default function YoYInsightCard({ cityId }) {
                     className="w-full rounded-sm transition-all duration-500"
                     style={{ height: `${pct}%`, backgroundColor: colour, opacity: 0.8 }}
                   />
-                  <span className="text-[9px] text-gray-500 leading-none">{year}</span>
+                  <span className="text-[9px] text-gray-400 dark:text-gray-500 leading-none">{year}</span>
                   {/* Tooltip on hover */}
-                  <div className="absolute bottom-full mb-1 hidden group-hover:block bg-gray-700 text-xs text-white px-1.5 py-0.5 rounded shadow-lg whitespace-nowrap z-10">
-                    {year}: AQI {aqi}
+                  <div className="absolute bottom-full mb-1 hidden group-hover:block bg-white dark:bg-gray-700 border border-gray-200 dark:border-transparent text-xs text-gray-800 dark:text-white px-1.5 py-0.5 rounded shadow-lg whitespace-nowrap z-10">
+                    {year}: AQI {aqi ?? '—'}
                   </div>
                 </div>
               );

@@ -25,7 +25,7 @@ export default function PollutantTabBar({ cityId }) {
             className={`text-sm px-3 py-1 rounded-full border font-medium transition-colors
               ${active
                 ? 'bg-blue-600 border-blue-600 text-white'
-                : 'border-gray-600 text-gray-300 hover:border-blue-400 hover:text-blue-300'}`}
+                : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-blue-400 hover:text-blue-500 dark:hover:text-blue-300'}`}
           >
             {label}
           </button>

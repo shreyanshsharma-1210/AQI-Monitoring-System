@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, CircleMarker, Tooltip, useMap } from 'react-leaflet';
 import { useSearchParams } from 'react-router-dom';
 import useStore, { classifyAQI, getAQIColor } from '../store/useStore';
@@ -47,6 +48,7 @@ function AQIMarker({ station, onClick }) {
 }
 
 export default function Heatmap() {
+  const { t } = useTranslation();
   const { cities, setCities, selectedCityId, setSelectedCityId, initSocket, liveUpdates } = useStore();
   const [searchParams] = useSearchParams();
 
@@ -132,15 +134,15 @@ export default function Heatmap() {
     });
 
   return (
-    <div className="relative h-[calc(100vh-56px)] flex flex-col bg-gray-950">
+    <div className="relative h-[calc(100vh-56px)] flex flex-col bg-slate-50 dark:bg-gray-950">
       {/* Controls bar */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] flex items-center gap-2">
         {drillMode && (
           <button
             onClick={resetToCountry}
-            className="bg-gray-900 border border-gray-600 text-white text-xs px-3 py-1.5 rounded-lg hover:border-blue-400 transition-colors"
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white text-xs px-3 py-1.5 rounded-lg hover:border-blue-400 transition-colors"
           >
-            ← All India
+            {t('heatmap.allIndia')}
           </button>
         )}
         <CitySelector
@@ -154,7 +156,7 @@ export default function Heatmap() {
         {drillMode && (
           <>
             <span className="bg-blue-600/80 text-white text-xs px-2.5 py-1 rounded-lg">
-              {enrichedStations.length} stations
+              {enrichedStations.length} {t('heatmap.stations')}
             </span>
           </>
         )}
@@ -168,7 +170,7 @@ export default function Heatmap() {
         zoomControl={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://carto.com">CARTO</a>'
         />
         <FlyTo center={mapCenter} zoom={mapZoom} />
@@ -194,8 +196,8 @@ export default function Heatmap() {
       </MapContainer>
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 z-[1000] bg-gray-900/90 border border-gray-700 rounded-xl p-3 text-xs space-y-1">
-        <p className="text-gray-400 font-semibold mb-1.5">AQI Scale</p>
+      <div className="absolute bottom-4 left-4 z-[1000] bg-white/90 dark:bg-gray-900/90 border border-gray-200 dark:border-gray-700 rounded-xl p-3 text-xs space-y-1">
+        <p className="text-gray-500 dark:text-gray-400 font-semibold mb-1.5">{t('heatmap.aqiScale')}</p>
         {[
           ['Good', '#22c55e', '0–50'],
           ['Moderate', '#facc15', '51–100'],
@@ -206,12 +208,12 @@ export default function Heatmap() {
         ].map(([label, hex, range]) => (
           <div key={label} className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full" style={{ backgroundColor: hex }} />
-            <span className="text-gray-300">{label}</span>
-            <span className="text-gray-500 ml-auto pl-3">{range}</span>
+            <span className="text-gray-700 dark:text-gray-300">{t(`aqi.${label}`, label)}</span>
+            <span className="text-gray-400 dark:text-gray-500 ml-auto pl-3">{range}</span>
           </div>
         ))}
         {!drillMode && (
-          <p className="text-gray-500 pt-1 border-t border-gray-700">Click a city to drill down</p>
+          <p className="text-gray-400 dark:text-gray-500 pt-1 border-t border-gray-200 dark:border-gray-700">{t('heatmap.clickCity')}</p>
         )}
       </div>
 

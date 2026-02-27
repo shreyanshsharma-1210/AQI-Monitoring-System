@@ -42,22 +42,17 @@ export default function CheckInCard({ userId, stats, onCheckin }) {
   const totalCheckins = stats?.total_checkins ?? 0;
 
   return (
-    <div className="
-      rounded-xl border p-4 mt-1
-      bg-gray-800 border-gray-700 text-white
-      dark:bg-gray-800 dark:border-gray-700 dark:text-white
-      light:bg-white light:border-gray-200 light:text-gray-900
-    ">
+    <div className="rounded-xl border p-4 mt-1 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <CalendarCheck size={16} className="text-blue-400" />
-          <span className="text-sm font-semibold">Daily Check-In</span>
+          <span className="text-sm font-semibold">{t('checkin.title')}</span>
         </div>
         {streak > 0 && (
           <div className="flex items-center gap-1 text-xs text-orange-400">
             <Flame size={13} />
-            <span>{streak} day streak</span>
+            <span>{streak} {t('checkin.dayStreak')}</span>
           </div>
         )}
       </div>
@@ -90,14 +85,14 @@ export default function CheckInCard({ userId, stats, onCheckin }) {
           ${checkedInToday
             ? 'bg-green-600/30 text-green-400 border border-green-600/40 cursor-default'
             : !userId
-              ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+              ? 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
               : 'bg-blue-600 hover:bg-blue-500 text-white cursor-pointer'}
         `}
       >
         {checkedInToday
           ? <><CheckCircle size={15} /> {t('profile.checkedIn')}</>
           : loading
-            ? 'Checking in…'
+            ? t('checkin.checkingIn')
             : t('profile.checkIn')}
       </button>
     </div>

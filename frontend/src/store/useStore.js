@@ -39,7 +39,7 @@ function haversineKm(lat1, lon1, lat2, lon2) {
 }
 
 // ── Theme init ─────────────────────────────────────────────────────────────────
-const savedTheme = localStorage.getItem('aqi_theme') || 'dark';
+const savedTheme = localStorage.getItem('aqi_theme') || 'light';
 if (savedTheme === 'light') {
   document.documentElement.classList.remove('dark');
   document.documentElement.classList.add('light');

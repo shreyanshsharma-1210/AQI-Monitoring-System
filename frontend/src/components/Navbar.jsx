@@ -20,26 +20,26 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="bg-gray-900 dark:bg-gray-900 light:bg-white border-b border-gray-800 dark:border-gray-800 light:border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 shadow-sm">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-between h-14">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-white dark:text-white light:text-gray-900 text-lg">
-          <Wind size={20} className="text-blue-400" />
-          <span>AQI<span className="text-blue-400">India</span></span>
+        <Link to="/" className="flex items-center gap-2 font-bold text-gray-900 dark:text-white text-lg shrink-0">
+          <Wind size={20} className="text-blue-500" />
+          <span>AQI<span className="text-blue-500">FY</span></span>
         </Link>
 
         {/* Nav links */}
-        <nav className="flex items-center gap-1 overflow-x-auto">
+        <nav className="flex items-center gap-0.5 overflow-x-auto scrollbar-hide mx-2 flex-1 justify-center">
           {links.map(({ to, label, icon: Icon }) => {
             const active = to === '/' ? pathname === '/' : pathname.startsWith(to);
             return (
               <Link
                 key={to}
                 to={to}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors whitespace-nowrap
                   ${active
                     ? 'bg-blue-600 text-white'
-                    : 'text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-white dark:hover:text-white light:hover:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-100'}`}
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
               >
                 <Icon size={15} />
                 <span className="hidden md:inline">{label}</span>
@@ -52,7 +52,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 shrink-0">
           {/* Points indicator */}
           {gamification && (
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-yellow-400 text-xs font-semibold">
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-50 dark:bg-yellow-400/10 border border-yellow-300 dark:border-yellow-400/30 text-yellow-600 dark:text-yellow-400 text-xs font-semibold">
               ⭐ {gamification.points}
             </div>
           )}
@@ -60,7 +60,7 @@ export default function Navbar() {
           {/* Language toggle */}
           <button
             onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-            className="px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors bg-gray-800 dark:bg-gray-800 light:bg-gray-100 text-gray-300 dark:text-gray-300 light:text-gray-700 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-200 border border-gray-700 dark:border-gray-700 light:border-gray-300"
+            className="px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
             title="Switch language"
           >
             {language === 'en' ? 'हि' : 'EN'}
@@ -69,7 +69,7 @@ export default function Navbar() {
           {/* Theme toggle */}
           <button
             onClick={toggleTheme}
-            className="p-1.5 rounded-md transition-colors bg-gray-800 dark:bg-gray-800 light:bg-gray-100 text-gray-300 dark:text-gray-300 light:text-gray-700 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-200 border border-gray-700 dark:border-gray-700 light:border-gray-300"
+            className="p-1.5 rounded-md transition-colors bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700"
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}

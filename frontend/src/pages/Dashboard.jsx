@@ -24,14 +24,14 @@ const POLLUTANT_META = {
 function PollutantBar({ label, value, safe, warn, unit }) {
   const max = warn * 2;
   const pct = Math.min((value / max) * 100, 100);
-  const color = value <= safe ? '#22c55e' : value <= warn ? '#facc15' : '#ef4444';
+  const color = value <= safe ? '#22c55e' : value <= warn ? '#f59e0b' : '#ef4444';
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-xs">
-        <span className="text-gray-300">{label}</span>
+        <span className="text-gray-600 dark:text-gray-300 font-medium">{label}</span>
         <span className="text-gray-400">{value != null ? value.toFixed(1) : '—'} {unit}</span>
       </div>
-      <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: color }}
@@ -146,17 +146,17 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 dark:bg-gray-950 light:bg-gray-50 text-white dark:text-white light:text-gray-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-gray-900 dark:text-white">
       {/* City Header */}
       <div
-        className="px-4 py-5 border-b border-gray-800 dark:border-gray-800 light:border-gray-200"
-        style={{ background: `linear-gradient(135deg, ${color.hex}18 0%, transparent 60%)` }}
+        className="px-4 py-4 border-b border-gray-200 dark:border-gray-800"
+        style={{ background: `linear-gradient(135deg, ${color.hex}12 0%, transparent 60%)` }}
       >
         <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">{cityName}</h1>
-            <p className="text-xs text-gray-400 mt-0.5">
-              {enrichedStations.filter((s) => s.aqi != null).length} of {enrichedStations.length} stations reporting
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{cityName}</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {enrichedStations.filter((s) => s.aqi != null).length} {t('dashboard.stationsReporting')} ({enrichedStations.length})
               {lastUpdated && (
                 <span className="ml-2">· {t('dashboard.lastUpdated')} {lastUpdated.toLocaleTimeString()}</span>
               )}
@@ -164,19 +164,18 @@ export default function Dashboard() {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <CitySelector cities={cities} selected={selectedCityId} onChange={setSelectedCityId} />
-            {/* Location detect button */}
             <button
               onClick={detectAndSelectCity}
               disabled={locationDetecting || !cities.length}
               title={t('dashboard.detectLocation')}
-              className="p-2 rounded-lg bg-gray-800 dark:bg-gray-800 light:bg-gray-100 border border-gray-600 dark:border-gray-600 light:border-gray-300 hover:border-blue-500 text-gray-300 hover:text-blue-400 transition-colors disabled:opacity-50"
+              className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-blue-400 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors disabled:opacity-50 shadow-sm"
             >
               {locationDetecting ? <Loader2 size={14} className="animate-spin" /> : <MapPin size={14} />}
             </button>
             <button
               onClick={() => loadCityData(selectedCityId)}
               disabled={loading}
-              className="p-2 rounded-lg bg-gray-800 dark:bg-gray-800 light:bg-gray-100 border border-gray-600 dark:border-gray-600 light:border-gray-300 hover:border-gray-400 text-gray-300 hover:text-white transition-colors"
+              className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:border-gray-400 text-gray-600 dark:text-gray-300 hover:text-gray-900 transition-colors shadow-sm"
             >
               <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
             </button>
@@ -184,13 +183,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 py-5 space-y-5">
-        {/* Top row: Gauge + Health + Weather */}
+      <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-5 space-y-4">
+        {/* Top row: Gauge + Health + Stations */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* AQI Gauge Card — click to see recent readings */}
           <button
             onClick={() => setShowRecentModal(true)}
-            className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl border border-gray-700 dark:border-gray-700 light:border-gray-200 p-5 flex flex-col items-center gap-3 hover:border-gray-500 transition-colors cursor-pointer w-full text-left"
+            className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-5 flex flex-col items-center gap-3 hover:border-blue-300 dark:hover:border-gray-500 hover:shadow-md transition-all cursor-pointer w-full text-left shadow-sm"
             title="Click to see last 10 readings"
           >
             {loading && !aqi ? (
@@ -199,16 +198,16 @@ export default function Dashboard() {
               <>
                 <AQIGauge aqi={aqi} category={category} size={150} />
                 <div className="text-center">
-                  <p className="text-xs text-gray-400">
-                    Avg of {enrichedStations.filter((s) => s.aqi != null).length} stations
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {t('dashboard.avgStations', { count: enrichedStations.filter((s) => s.aqi != null).length })}
                   </p>
                   {summary?.station_count > 0 && (
                     <div className="flex items-center justify-center gap-1 mt-1">
-                      <Radio size={10} className="text-green-400 animate-pulse" />
-                      <span className="text-xs text-green-400">{t('dashboard.live')}</span>
+                      <Radio size={10} className="text-green-500 animate-pulse" />
+                      <span className="text-xs text-green-600 dark:text-green-400">{t('dashboard.live')}</span>
                     </div>
                   )}
-                  <p className="text-[10px] text-gray-600 mt-1">Click for history</p>
+                  <p className="text-[10px] text-gray-400 dark:text-gray-600 mt-1">{t('dashboard.clickForHistory')}</p>
                 </div>
               </>
             )}
@@ -219,14 +218,14 @@ export default function Dashboard() {
             {loading && !summary ? <SkeletonCard lines={5} /> : <HealthInsightCard aqi={aqi} />}
 
             {/* Monitoring Stations */}
-            <div className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl border border-gray-700 dark:border-gray-700 light:border-gray-200 p-4 flex-1">
-              <h3 className="text-sm font-semibold mb-3">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 flex-1 shadow-sm">
+              <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-3">
                 {t('dashboard.stations')} — {cityName}
               </h3>
               {loading && enrichedStations.length === 0 ? (
                 <SkeletonList count={4} />
               ) : enrichedStations.length === 0 ? (
-                <p className="text-xs text-gray-500">No station data yet. Pipeline refreshes every 15 min.</p>
+                <p className="text-xs text-gray-400">{t('dashboard.noStationData')}</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
                   {enrichedStations.map((s) => {
@@ -236,7 +235,7 @@ export default function Dashboard() {
                       <button
                         key={s.id}
                         onClick={() => navigate(`/heatmap?station=${s.id}`)}
-                        className="flex items-center gap-3 bg-gray-800 dark:bg-gray-800 light:bg-gray-50 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-100 rounded-lg px-3 py-2.5 text-left transition-colors"
+                        className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 border border-gray-100 dark:border-transparent hover:border-blue-200 rounded-lg px-3 py-2.5 text-left transition-colors"
                       >
                         <div
                           className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
@@ -245,8 +244,8 @@ export default function Dashboard() {
                           {s.aqi != null ? Math.round(s.aqi) : '—'}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-medium truncate">{s.station_name}</p>
-                          <p className="text-[10px] text-gray-400 truncate">{cat}</p>
+                          <p className="text-xs font-medium text-gray-800 dark:text-gray-100 truncate">{s.station_name}</p>
+                          <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">{cat}</p>
                         </div>
                       </button>
                     );
@@ -276,9 +275,9 @@ export default function Dashboard() {
         {selectedCityId && <YoYInsightCard cityId={selectedCityId} />}
 
         {/* Pollutant bars */}
-        <div className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl border border-gray-700 dark:border-gray-700 light:border-gray-200 p-4">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold">{t('dashboard.pollutants')}</h3>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">{t('dashboard.pollutants')}</h3>
             <PollutantTabBar cityId={selectedCityId} />
           </div>
           {loading && !enrichedStations.length ? (
@@ -307,15 +306,15 @@ export default function Dashboard() {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
           onClick={(e) => e.target === e.currentTarget && setShowRecentModal(false)}
         >
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-lg shadow-2xl">
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl w-full max-w-lg shadow-2xl">
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
               <div className="flex items-center gap-2">
-                <Clock size={15} className="text-blue-400" />
-                <span className="font-semibold text-sm">Last 10 AQI Readings — {cityName}</span>
+                <Clock size={15} className="text-blue-500" />
+                <span className="font-semibold text-sm text-gray-900 dark:text-white">{t('dashboard.recentReadings')} — {cityName}</span>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-[10px] text-gray-500">Auto-refreshes every 3 min</span>
+                <span className="text-[10px] text-gray-400">{t('dashboard.autoRefresh')}</span>
                 <button
                   onClick={() => setShowRecentModal(false)}
                   className="text-gray-400 hover:text-white transition-colors"
@@ -332,16 +331,16 @@ export default function Dashboard() {
                   <Loader2 size={20} className="animate-spin text-gray-500" />
                 </div>
               ) : recentReadings.length === 0 ? (
-                <p className="text-xs text-gray-500 text-center py-8">No readings yet. Pipeline refreshes every 3 min.</p>
+                <p className="text-xs text-gray-500 text-center py-8">{t('dashboard.noReadings')}</p>
               ) : (
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="text-gray-500 border-b border-gray-800">
+                    <tr className="text-gray-400 border-b border-gray-100 dark:border-gray-800">
                       <th className="text-left pb-2 font-medium">#</th>
-                      <th className="text-left pb-2 font-medium">Timestamp</th>
+                      <th className="text-left pb-2 font-medium">{t('dashboard.colTimestamp')}</th>
                       <th className="text-right pb-2 font-medium">AQI</th>
-                      <th className="text-right pb-2 font-medium">Min / Max</th>
-                      <th className="text-right pb-2 font-medium">Stations</th>
+                      <th className="text-right pb-2 font-medium">{t('dashboard.colMinMax')}</th>
+                      <th className="text-right pb-2 font-medium">{t('dashboard.colStations')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -350,9 +349,9 @@ export default function Dashboard() {
                       const col = getAQIColor(cat);
                       const ts = new Date(r.bucket + 'Z');
                       return (
-                        <tr key={r.bucket} className="border-b border-gray-800/50 hover:bg-gray-800/40 transition-colors">
-                          <td className="py-2 text-gray-600 pr-2">{i + 1}</td>
-                          <td className="py-2 font-mono text-gray-300">
+                        <tr key={r.bucket} className="border-b border-gray-100 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors">
+                          <td className="py-2 text-gray-400 dark:text-gray-600 pr-2">{i + 1}</td>
+                          <td className="py-2 font-mono text-gray-700 dark:text-gray-300">
                             {ts.toLocaleDateString()} {ts.toLocaleTimeString()}
                           </td>
                           <td className="py-2 text-right">
@@ -363,10 +362,10 @@ export default function Dashboard() {
                               {r.aqi}
                             </span>
                           </td>
-                          <td className="py-2 text-right text-gray-400">
+                          <td className="py-2 text-right text-gray-500 dark:text-gray-400">
                             {r.aqi_min} / {r.aqi_max}
                           </td>
-                          <td className="py-2 text-right text-gray-400">{r.station_count}</td>
+                          <td className="py-2 text-right text-gray-500 dark:text-gray-400">{r.station_count}</td>
                         </tr>
                       );
                     })}
@@ -377,8 +376,8 @@ export default function Dashboard() {
 
             {/* Footer */}
             <div className="px-5 pb-4 flex items-center justify-between">
-              <span className="text-[10px] text-gray-600">
-                {recentLoading ? 'Refreshing…' : `Fetched at ${new Date().toLocaleTimeString()}`}
+              <span className="text-[10px] text-gray-400">
+                {recentLoading ? t('dashboard.refreshing') : `${t('dashboard.fetchedAt')} ${new Date().toLocaleTimeString()}`}
               </span>
               <button
                 onClick={() => fetchRecent(selectedCityId)}
@@ -386,7 +385,7 @@ export default function Dashboard() {
                 className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-50"
               >
                 <RefreshCw size={11} className={recentLoading ? 'animate-spin' : ''} />
-                Refresh now
+                {t('dashboard.refreshNow')}
               </button>
             </div>
           </div>

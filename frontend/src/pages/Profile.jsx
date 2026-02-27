@@ -17,7 +17,8 @@ const levelColour = (lvl) => {
 
 // ── Progress bar toward next level ────────────────────────────────────────────
 function LevelProgress({ points, nextLevel }) {
-  if (!nextLevel) return <p className="text-xs text-yellow-400 text-center">Max Level!</p>;
+  const { t } = useTranslation();
+  if (!nextLevel) return <p className="text-xs text-yellow-400 text-center">{t('profile.maxLevel')}</p>;
   const pct = Math.min((points / nextLevel.threshold) * 100, 100);
   return (
     <div className="space-y-1">
@@ -25,7 +26,7 @@ function LevelProgress({ points, nextLevel }) {
         <span>{points} pts</span>
         <span>{nextLevel.threshold} pts → {nextLevel.name}</span>
       </div>
-      <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
+      <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{ width: `${pct}%`, backgroundColor: '#3b82f6' }}
@@ -142,7 +143,7 @@ export default function Profile() {
   const lockedBadges = allBadges.filter((b) => !b.earned);
 
   return (
-    <div className="min-h-screen bg-gray-950 dark:bg-gray-950 light:bg-gray-50 text-white dark:text-white light:text-gray-900">
+    <div className="min-h-screen bg-slate-50 dark:bg-gray-950 text-gray-900 dark:text-white">
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
 
         {/* ── Hero stats ── */}
@@ -155,12 +156,12 @@ export default function Profile() {
             }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gray-800 dark:bg-gray-800 light:bg-gray-200 flex items-center justify-center">
-                <User size={22} className="text-gray-300 dark:text-gray-300 light:text-gray-600" />
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <User size={22} className="text-gray-500 dark:text-gray-300" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-200 dark:text-gray-200 light:text-gray-700">
-                  {userProfile?.email || 'Guest User'}
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                  {userProfile?.email || t('profile.guestUser')}
                 </p>
                 <p className="text-xs font-bold" style={{ color: levelColour(g.level) }}>
                   {g.level_name} · Level {g.level}
@@ -175,7 +176,7 @@ export default function Profile() {
                 { label: t('profile.streak'),        value: `${g.streak_days}d`, icon: '🔥' },
                 { label: t('profile.totalCheckins'), value: g.total_checkins, icon: '📅' },
               ].map(({ label, value, icon }) => (
-                <div key={label} className="rounded-xl bg-gray-800/60 dark:bg-gray-800/60 light:bg-white/80 border border-gray-700/40 dark:border-gray-700/40 light:border-gray-200 p-2">
+                <div key={label} className="rounded-xl bg-white/80 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/40 p-2">
                   <p className="text-lg font-bold">{icon} {value}</p>
                   <p className="text-xs text-gray-400">{label}</p>
                 </div>
@@ -203,7 +204,7 @@ export default function Profile() {
         />
 
         {/* ── Badges ── */}
-        <div className="rounded-xl border bg-gray-800 dark:bg-gray-800 light:bg-white border-gray-700 dark:border-gray-700 light:border-gray-200 p-4">
+        <div className="rounded-xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4">
           <div className="flex items-center gap-2 mb-3">
             <Star size={15} className="text-yellow-400" />
             <span className="text-sm font-semibold">{t('profile.badges')}</span>
@@ -238,7 +239,7 @@ export default function Profile() {
                   className={`flex flex-col items-center gap-1 p-2 rounded-lg border text-center transition-all
                     ${b.earned
                       ? 'bg-yellow-400/10 border-yellow-400/40'
-                      : 'bg-gray-700/40 dark:bg-gray-700/40 light:bg-gray-100 border-gray-600/40 dark:border-gray-600/40 light:border-gray-200 opacity-50'}
+                      : 'bg-gray-50 dark:bg-gray-700/40 border-gray-200 dark:border-gray-600/40 opacity-50'}
                   `}
                 >
                   <span className="text-2xl">{b.emoji}</span>
@@ -251,7 +252,7 @@ export default function Profile() {
               ))}
               {badgeTab === 'earned' && earnedBadges.length === 0 && (
                 <p className="col-span-3 text-center text-xs text-gray-500 py-4">
-                  Check in to earn your first badge!
+                  {t('profile.firstBadge')}
                 </p>
               )}
             </div>
@@ -259,10 +260,10 @@ export default function Profile() {
         </div>
 
         {/* ── Settings ── */}
-        <div className="rounded-xl border bg-gray-800 dark:bg-gray-800 light:bg-white border-gray-700 dark:border-gray-700 light:border-gray-200 p-4">
+        <div className="rounded-xl border bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 p-4">
           <div className="flex items-center gap-2 mb-3">
             <Settings size={15} className="text-blue-400" />
-            <span className="text-sm font-semibold">Settings</span>
+            <span className="text-sm font-semibold">{t('profile.settings')}</span>
           </div>
 
           <form onSubmit={saveSettings} className="space-y-3">
@@ -272,7 +273,7 @@ export default function Profile() {
               <select
                 value={cityId}
                 onChange={(e) => setCityId(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg text-sm bg-gray-700 dark:bg-gray-700 light:bg-gray-100 border border-gray-600 dark:border-gray-600 light:border-gray-300 text-white dark:text-white light:text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-lg text-sm bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="">Select a city…</option>
                 {cities.map((c) => (
@@ -287,7 +288,7 @@ export default function Profile() {
               <select
                 value={selectedLang}
                 onChange={(e) => setSelectedLang(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg text-sm bg-gray-700 dark:bg-gray-700 light:bg-gray-100 border border-gray-600 dark:border-gray-600 light:border-gray-300 text-white dark:text-white light:text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-lg text-sm bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="en">English</option>
                 <option value="hi">हिंदी</option>

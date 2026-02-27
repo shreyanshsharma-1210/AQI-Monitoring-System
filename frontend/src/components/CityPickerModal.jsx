@@ -24,14 +24,14 @@ export default function CityPickerModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="p-6 pb-4 border-b border-gray-800">
+        <div className="p-6 pb-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center gap-3 mb-1">
             <div className="p-2 rounded-xl bg-blue-500/20">
               <Globe size={20} className="text-blue-400" />
             </div>
-            <h2 className="text-lg font-bold text-white">Welcome to AQI Monitor</h2>
+            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Welcome to AQIFY</h2>
           </div>
           <p className="text-sm text-gray-400 mt-2">
             Select your city to see live air quality data, or let us detect your location automatically.
@@ -59,9 +59,9 @@ export default function CityPickerModal() {
           </button>
 
           <div className="flex items-center gap-2 mt-4">
-            <div className="flex-1 h-px bg-gray-700" />
-            <span className="text-xs text-gray-500">or choose manually</span>
-            <div className="flex-1 h-px bg-gray-700" />
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+            <span className="text-xs text-gray-400">or choose manually</span>
+            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
           </div>
         </div>
 
@@ -75,8 +75,8 @@ export default function CityPickerModal() {
               placeholder="Search city or state…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-8 pr-3 py-2
-                text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 transition-colors"
+              className="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg pl-8 pr-3 py-2
+                text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
         </div>
@@ -91,13 +91,13 @@ export default function CityPickerModal() {
               key={city.id}
               onClick={() => pick(city)}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
-                bg-gray-800/60 hover:bg-gray-700 text-left transition-colors group"
+                bg-gray-50 dark:bg-gray-800/60 hover:bg-blue-50 dark:hover:bg-gray-700 border border-gray-100 dark:border-transparent text-left transition-colors group"
             >
-              <div className="w-8 h-8 rounded-lg bg-gray-700 group-hover:bg-blue-600/30 flex items-center justify-center transition-colors shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-100 dark:group-hover:bg-blue-600/30 flex items-center justify-center transition-colors shrink-0">
                 <MapPin size={14} className="text-gray-400 group-hover:text-blue-400 transition-colors" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-medium text-white truncate">{city.name}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{city.name}</p>
                 {city.state && <p className="text-xs text-gray-500 truncate">{city.state}</p>}
               </div>
             </button>

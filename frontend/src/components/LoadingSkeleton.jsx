@@ -9,14 +9,14 @@
 export function Skeleton({ className = '' }) {
   return (
     <div
-      className={`animate-pulse rounded bg-gray-700 dark:bg-gray-700 light:bg-gray-200 ${className}`}
+      className={`animate-pulse rounded bg-gray-200 dark:bg-gray-700 ${className}`}
     />
   );
 }
 
 export function SkeletonCard({ lines = 3 }) {
   return (
-    <div className="rounded-xl bg-gray-800 dark:bg-gray-800 light:bg-gray-100 p-4 space-y-3 animate-pulse">
+    <div className="rounded-xl bg-gray-100 dark:bg-gray-800 p-4 space-y-3 animate-pulse">
       <Skeleton className="h-4 w-2/3" />
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton key={i} className={`h-3 ${i === lines - 1 ? 'w-1/2' : 'w-full'}`} />
@@ -37,7 +37,7 @@ export function SkeletonGauge() {
 
 export function SkeletonRow() {
   return (
-    <div className="flex items-center gap-3 bg-gray-800 dark:bg-gray-800 light:bg-gray-100 rounded-xl px-4 py-3 animate-pulse">
+    <div className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-3 animate-pulse">
       <Skeleton className="h-4 w-6 shrink-0" />
       <div className="flex-1 space-y-1">
         <Skeleton className="h-3 w-28" />

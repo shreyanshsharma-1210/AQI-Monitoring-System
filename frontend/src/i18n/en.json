@@ -20,7 +20,20 @@
     "loading": "Loading...",
     "stations": "Monitoring Stations",
     "forecast": "48-Hour Forecast",
-    "pollutants": "Pollutant Levels"
+    "pollutants": "Pollutant Levels",
+    "stationsReporting": "stations reporting",
+    "avgStations": "Avg of {{count}} stations",
+    "clickForHistory": "Click for history",
+    "noStationData": "No station data yet. Pipeline refreshes every 15 min.",
+    "recentReadings": "Last 10 AQI Readings",
+    "autoRefresh": "Auto-refreshes every 3 min",
+    "noReadings": "No readings yet. Pipeline refreshes every 3 min.",
+    "refreshNow": "Refresh now",
+    "refreshing": "Refreshing\u2026",
+    "fetchedAt": "Fetched at",
+    "colTimestamp": "Timestamp",
+    "colMinMax": "Min / Max",
+    "colStations": "Stations"
   },
   "aqi": {
     "Good": "Good",
@@ -70,6 +83,29 @@
     "pts": "pts",
     "loading": "Loading challenges..."
   },
+  "health": {
+    "advisory": "Health Advisory",
+    "risk": "{{level}} Risk",
+    "Low": "Low Risk",
+    "Moderate": "Moderate Risk",
+    "High": "High Risk",
+    "Very High": "Very High Risk",
+    "Hazardous": "Hazardous Risk"
+  },
+  "checkin": {
+    "title": "Daily Check-In",
+    "dayStreak": "day streak",
+    "checkingIn": "Checking in\u2026"
+  },
+  "yoy": {
+    "title": "Year-over-Year Insight"
+  },
+  "heatmap": {
+    "allIndia": "\u2190 All India",
+    "aqiScale": "AQI Scale",
+    "clickCity": "Click a city to drill down",
+    "stations": "stations"
+  },
   "rankings": {
     "title": "City Rankings",
     "hottest": "🌡️ Hottest",
@@ -78,14 +114,49 @@
     "cleanest": "✅ Cleanest"
   },
   "weather": {
+    "title": "Current Weather",
     "temperature": "Temperature",
+    "temp": "Temp",
+    "feels": "Feels",
     "humidity": "Humidity",
     "wind": "Wind",
     "uvIndex": "UV Index",
-    "precipitation": "Precip. Chance"
+    "uv": "UV",
+    "precipitation": "Precip. Chance",
+    "chanceOfRain": "chance of rain"
   },
   "history": {
-    "title": "Historical Analysis"
+    "title": "Historical AQI Analysis",
+    "yoyComparison": "Year-over-Year Monthly Comparison",
+    "dayNightTitle": "24-Hour AQI Pattern (last 30 days)",
+    "bestHour": "Best Hour (avg)",
+    "worstHour": "Worst Hour (avg)",
+    "dayAvg": "Day Avg (6 AM\u20136 PM)",
+    "nightAvg": "Night Avg (6 PM\u20136 AM)",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "analyse": "Analyse",
+    "rangeTitle": "Custom Date Range Stats",
+    "minAQI": "Min AQI",
+    "avgAQI": "Avg AQI",
+    "maxAQI": "Max AQI",
+    "from": "From",
+    "to": "To",
+    "dataPoints": "Data Points",
+    "earliest": "earliest reading",
+    "latest": "latest reading",
+    "totalRecords": "total records",
+    "loading": "Loading\u2026",
+    "noMonthData": "No data for {{month}}. Seed historical data first.",
+    "noHourlyData": "No hourly data yet. Data accumulates as the pipeline runs.",
+    "dayLegend": "Day (6 AM \u2013 6 PM)",
+    "nightLegend": "Night (6 PM \u2013 6 AM)",
+    "dayLabel": "Day",
+    "switchPollutant": "Switch pollutant",
+    "noPollutantData": "No data yet \u2014 pipeline runs every 15 minutes",
+    "average": "Average",
+    "maximum": "Maximum",
+    "minimum": "Minimum"
   },
   "theme": {
     "dark": "Dark",
@@ -94,6 +165,9 @@
   "common": {
     "cities": "cities",
     "highestFirst": "Highest first",
-    "lowestFirst": "Lowest first"
+    "lowestFirst": "Lowest first",
+    "loading": "Loading\u2026",
+    "noData": "No data yet",
+    "refreshNow": "Refresh now"
   }
 }
