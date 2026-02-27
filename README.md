@@ -280,26 +280,8 @@ Live city rankings across 4 axes — refreshed every 5 minutes from WAQI + Open-
 
 </details>
 
-<details>
-<summary><h3>🧩 &nbsp;Embeddable AQI Widget &nbsp;<img src="https://img.shields.io/badge/1--Line_Embed-10B981?style=flat-square" /></h3></summary>
 
-Drop a live AQI card on any website with a single `<script>` tag.
 
-```html
-<script
-  src="https://aqify.app/widget.js"
-  data-city="indore"
-  data-theme="light"
-  data-lang="en"
-></script>
-```
-
-- 🏙️ City-configurable, auto-updating every 60 seconds
-- 🎨 Matches host site theme (`light` / `dark`)
-- 📱 Fully responsive for any screen size
-- 🔗 Deep-links back to the full AQIfy dashboard
-
-</details>
 
 <details>
 <summary><h3>🌐 &nbsp;Multi-Language Support (i18n) &nbsp;<img src="https://img.shields.io/badge/Auto--Detect-Browser_Locale-8B5CF6?style=flat-square" /></h3></summary>
