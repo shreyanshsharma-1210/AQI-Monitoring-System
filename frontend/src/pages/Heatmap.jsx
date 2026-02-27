@@ -63,7 +63,7 @@ export default function Heatmap() {
     }
   }, []);
 
-  // Drill into city stations
+  // Drill into city stations + fetch community reports
   const drillIntoCity = async (city) => {
     setSelectedCityId(city.id);
     const res = await fetch(`/api/aqi/cities/${city.id}/stations`);
@@ -152,9 +152,11 @@ export default function Heatmap() {
           }}
         />
         {drillMode && (
-          <span className="bg-blue-600/80 text-white text-xs px-2.5 py-1 rounded-lg">
-            {enrichedStations.length} stations
-          </span>
+          <>
+            <span className="bg-blue-600/80 text-white text-xs px-2.5 py-1 rounded-lg">
+              {enrichedStations.length} stations
+            </span>
+          </>
         )}
       </div>
 
@@ -188,6 +190,7 @@ export default function Heatmap() {
             onClick={() => setSelectedStation(s)}
           />
         ))}
+
       </MapContainer>
 
       {/* Legend */}

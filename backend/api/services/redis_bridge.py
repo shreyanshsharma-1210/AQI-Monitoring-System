@@ -3,6 +3,7 @@ import json
 import redis.asyncio as aioredis
 from api.core.config import settings
 
+
 async def redis_to_socket_bridge(sio):
     """
     Bridge that listens to Redis Pub/Sub and broadcasts to Socket.IO.
@@ -17,9 +18,10 @@ async def redis_to_socket_bridge(sio):
             if message["type"] == "message":
                 try:
                     data = json.loads(message["data"])
-                    # Broadcast to all connected clients
+                    # Broadcast to all connected Socket.IO clients
                     await sio.emit("aqi_update", data)
                     print(f"Broadcasted update for {data.get('city')}")
+
                 except Exception as e:
                     print(f"Error processing Redis message: {e}")
     except asyncio.CancelledError:

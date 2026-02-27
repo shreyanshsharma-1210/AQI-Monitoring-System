@@ -56,8 +56,12 @@ export default function Profile() {
 
   // ── Auto-refresh gamification on mount ─────────────────────────────────────
   useEffect(() => {
-    if (userId) refreshGamification(userId);
-  }, [userId]);
+    (async () => {
+      let uid = userId;
+      if (!uid) uid = await ensureUser();
+      if (uid) refreshGamification(uid);
+    })();
+  }, []);
 
   // ── Sync language picker with store ────────────────────────────────────────
   useEffect(() => {

@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RefreshCw, Radio, MapPin, Loader2 } from 'lucide-react';
+import { RefreshCw, Radio, MapPin, Loader2, X, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import useStore, { classifyAQI, getAQIColor } from '../store/useStore';
 import AQIGauge from '../components/AQIGauge';
@@ -55,6 +55,35 @@ export default function Dashboard() {
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
+
+  // Recent readings modal
+  const [showRecentModal, setShowRecentModal] = useState(false);
+  const [recentReadings, setRecentReadings] = useState([]);
+  const [recentLoading, setRecentLoading] = useState(false);
+  const recentIntervalRef = useRef(null);
+
+  const fetchRecent = useCallback(async (cityId) => {
+    if (!cityId) return;
+    setRecentLoading(true);
+    try {
+      const res = await fetch(`/api/aqi/cities/${cityId}/recent?limit=10`);
+      if (res.ok) setRecentReadings(await res.json());
+    } catch (e) {
+      console.error('Failed to load recent readings', e);
+    } finally {
+      setRecentLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (showRecentModal && selectedCityId) {
+      fetchRecent(selectedCityId);
+      recentIntervalRef.current = setInterval(() => fetchRecent(selectedCityId), 3 * 60 * 1000);
+    } else {
+      clearInterval(recentIntervalRef.current);
+    }
+    return () => clearInterval(recentIntervalRef.current);
+  }, [showRecentModal, selectedCityId, fetchRecent]);
 
   // Load cities once
   useEffect(() => {
@@ -158,8 +187,12 @@ export default function Dashboard() {
       <div className="max-w-5xl mx-auto px-4 py-5 space-y-5">
         {/* Top row: Gauge + Health + Weather */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* AQI Gauge Card */}
-          <div className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl border border-gray-700 dark:border-gray-700 light:border-gray-200 p-5 flex flex-col items-center gap-3">
+          {/* AQI Gauge Card — click to see recent readings */}
+          <button
+            onClick={() => setShowRecentModal(true)}
+            className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl border border-gray-700 dark:border-gray-700 light:border-gray-200 p-5 flex flex-col items-center gap-3 hover:border-gray-500 transition-colors cursor-pointer w-full text-left"
+            title="Click to see last 10 readings"
+          >
             {loading && !aqi ? (
               <SkeletonGauge />
             ) : (
@@ -175,14 +208,52 @@ export default function Dashboard() {
                       <span className="text-xs text-green-400">{t('dashboard.live')}</span>
                     </div>
                   )}
+                  <p className="text-[10px] text-gray-600 mt-1">Click for history</p>
                 </div>
               </>
             )}
-          </div>
+          </button>
 
-          {/* Health Insight */}
-          <div className="md:col-span-2">
+          {/* Health Insight + Stations */}
+          <div className="md:col-span-2 flex flex-col gap-4">
             {loading && !summary ? <SkeletonCard lines={5} /> : <HealthInsightCard aqi={aqi} />}
+
+            {/* Monitoring Stations */}
+            <div className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl border border-gray-700 dark:border-gray-700 light:border-gray-200 p-4 flex-1">
+              <h3 className="text-sm font-semibold mb-3">
+                {t('dashboard.stations')} — {cityName}
+              </h3>
+              {loading && enrichedStations.length === 0 ? (
+                <SkeletonList count={4} />
+              ) : enrichedStations.length === 0 ? (
+                <p className="text-xs text-gray-500">No station data yet. Pipeline refreshes every 15 min.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                  {enrichedStations.map((s) => {
+                    const cat = s.aqi != null ? classifyAQI(s.aqi) : 'Unknown';
+                    const col = getAQIColor(cat);
+                    return (
+                      <button
+                        key={s.id}
+                        onClick={() => navigate(`/heatmap?station=${s.id}`)}
+                        className="flex items-center gap-3 bg-gray-800 dark:bg-gray-800 light:bg-gray-50 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-100 rounded-lg px-3 py-2.5 text-left transition-colors"
+                      >
+                        <div
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
+                          style={{ backgroundColor: col.hex }}
+                        >
+                          {s.aqi != null ? Math.round(s.aqi) : '—'}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium truncate">{s.station_name}</p>
+                          <p className="text-[10px] text-gray-400 truncate">{cat}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -228,43 +299,100 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Stations list */}
-        <div className="bg-gray-900 dark:bg-gray-900 light:bg-white rounded-xl border border-gray-700 dark:border-gray-700 light:border-gray-200 p-4">
-          <h3 className="text-sm font-semibold mb-3">
-            {t('dashboard.stations')} — {cityName}
-          </h3>
-          {loading && enrichedStations.length === 0 ? (
-            <SkeletonList count={6} />
-          ) : enrichedStations.length === 0 ? (
-            <p className="text-xs text-gray-500">No station data yet. Pipeline refreshes every 15 min.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {enrichedStations.map((s) => {
-                const cat = s.aqi != null ? classifyAQI(s.aqi) : 'Unknown';
-                const col = getAQIColor(cat);
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => navigate(`/heatmap?station=${s.id}`)}
-                    className="flex items-center gap-3 bg-gray-800 dark:bg-gray-800 light:bg-gray-50 hover:bg-gray-700 dark:hover:bg-gray-700 light:hover:bg-gray-100 rounded-lg px-3 py-2.5 text-left transition-colors"
-                  >
-                    <div
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
-                      style={{ backgroundColor: col.hex }}
-                    >
-                      {s.aqi != null ? Math.round(s.aqi) : '—'}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium truncate">{s.station_name}</p>
-                      <p className="text-[10px] text-gray-400 truncate">{cat}</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
       </div>
+
+      {/* Recent Readings Modal */}
+      {showRecentModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={(e) => e.target === e.currentTarget && setShowRecentModal(false)}
+        >
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl w-full max-w-lg shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+              <div className="flex items-center gap-2">
+                <Clock size={15} className="text-blue-400" />
+                <span className="font-semibold text-sm">Last 10 AQI Readings — {cityName}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] text-gray-500">Auto-refreshes every 3 min</span>
+                <button
+                  onClick={() => setShowRecentModal(false)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Table */}
+            <div className="px-5 py-4">
+              {recentLoading && recentReadings.length === 0 ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 size={20} className="animate-spin text-gray-500" />
+                </div>
+              ) : recentReadings.length === 0 ? (
+                <p className="text-xs text-gray-500 text-center py-8">No readings yet. Pipeline refreshes every 3 min.</p>
+              ) : (
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="text-gray-500 border-b border-gray-800">
+                      <th className="text-left pb-2 font-medium">#</th>
+                      <th className="text-left pb-2 font-medium">Timestamp</th>
+                      <th className="text-right pb-2 font-medium">AQI</th>
+                      <th className="text-right pb-2 font-medium">Min / Max</th>
+                      <th className="text-right pb-2 font-medium">Stations</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentReadings.map((r, i) => {
+                      const cat = classifyAQI(r.aqi);
+                      const col = getAQIColor(cat);
+                      const ts = new Date(r.bucket + 'Z');
+                      return (
+                        <tr key={r.bucket} className="border-b border-gray-800/50 hover:bg-gray-800/40 transition-colors">
+                          <td className="py-2 text-gray-600 pr-2">{i + 1}</td>
+                          <td className="py-2 font-mono text-gray-300">
+                            {ts.toLocaleDateString()} {ts.toLocaleTimeString()}
+                          </td>
+                          <td className="py-2 text-right">
+                            <span
+                              className="font-bold px-1.5 py-0.5 rounded text-white"
+                              style={{ backgroundColor: col.hex }}
+                            >
+                              {r.aqi}
+                            </span>
+                          </td>
+                          <td className="py-2 text-right text-gray-400">
+                            {r.aqi_min} / {r.aqi_max}
+                          </td>
+                          <td className="py-2 text-right text-gray-400">{r.station_count}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-5 pb-4 flex items-center justify-between">
+              <span className="text-[10px] text-gray-600">
+                {recentLoading ? 'Refreshing…' : `Fetched at ${new Date().toLocaleTimeString()}`}
+              </span>
+              <button
+                onClick={() => fetchRecent(selectedCityId)}
+                disabled={recentLoading}
+                className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-white transition-colors disabled:opacity-50"
+              >
+                <RefreshCw size={11} className={recentLoading ? 'animate-spin' : ''} />
+                Refresh now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+

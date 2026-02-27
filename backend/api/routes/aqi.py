@@ -175,6 +175,38 @@ async def get_city_summary(city_id: int, request: Request, db: AsyncSession = De
 
 # ── Stations for a city ───────────────────────────────────────────────────────
 
+@router.get("/cities/{city_id}/recent")
+async def get_recent_readings(city_id: int, limit: int = 10, db: AsyncSession = Depends(get_db)):
+    """
+    Returns the last `limit` city-level AQI readings (grouped by 3-minute bucket)
+    so the frontend can show a live update history table.
+    """
+    result = await db.execute(
+        text("""
+            SELECT
+                to_char(
+                    date_trunc('minute', recorded_at::timestamp)
+                    - (EXTRACT(MINUTE FROM recorded_at::timestamp)::int % 3 * interval '1 minute'),
+                    'YYYY-MM-DD"T"HH24:MI:SS'
+                ) AS bucket,
+                ROUND(AVG(aqi))::int          AS aqi,
+                MIN(aqi)::int                 AS aqi_min,
+                MAX(aqi)::int                 AS aqi_max,
+                COUNT(DISTINCT station_id)    AS station_count
+            FROM station_aqi_history
+            WHERE city_id = :city_id
+              AND diff = 1
+              AND recorded_at IS NOT NULL
+            GROUP BY bucket
+            ORDER BY bucket DESC
+            LIMIT :limit
+        """),
+        {"city_id": city_id, "limit": limit},
+    )
+    rows = result.mappings().all()
+    return [dict(r) for r in rows]
+
+
 @router.get("/cities/{city_id}/stations")
 async def get_city_stations(city_id: int, request: Request, db: AsyncSession = Depends(get_db)):
     stations_result = await db.execute(select(Station).where(Station.city_id == city_id))

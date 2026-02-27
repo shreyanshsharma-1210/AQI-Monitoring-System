@@ -342,6 +342,28 @@ async def get_todays_challenges(db: AsyncSession, user_id: Optional[str] = None)
     ]
 
 
+async def award_points(db: AsyncSession, user_id: str, points: int, reason: str = "") -> dict:
+    """
+    Award a fixed number of points to a user for a specific action
+    (community report, verified report, etc.).
+    Creates a gamification row if the user doesn't have one yet.
+    """
+    g = await get_or_create_gamification(db, user_id)
+    g.points += points
+    level_num, level_name = compute_level(g.points)
+    g.level = level_num
+    g.updated_at = datetime.utcnow()
+    await db.commit()
+    await db.refresh(g)
+    return {
+        "points_earned": points,
+        "total_points":  g.points,
+        "level":         level_num,
+        "level_name":    level_name,
+        "reason":        reason,
+    }
+
+
 async def complete_challenge(db: AsyncSession, user_id: str, challenge_id: int) -> dict:
     """Mark a challenge as completed and award points."""
     # Verify challenge exists and belongs to today
